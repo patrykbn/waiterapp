@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams, Navigate, useNavigate} from 'react-router-dom';
 import { getTableById, updateTableThunk } from '../../../redux/tablesRedux';
 import StatusSelect from '../../features/StatusSelect/StatusSelect';
 import PeopleInput from '../../features/PeopleInput/PeopleInput';
@@ -17,6 +17,7 @@ const Table = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const table = useSelector(state => getTableById(state, id));
+    const navigate = useNavigate();
 
     const [tableStatus, setTableStatus] = useState('');
     const [currentPeople, setCurrentPeople] = useState(0);
@@ -38,14 +39,17 @@ const Table = () => {
 
     const handleUpdate = (e) => {
         e.preventDefault();
-        dispatch(updateTableThunk({
+        const updatedTable = {
             id,
             tableNr,
             tableStatus,
             peopleCurrent: currentPeople,
             peopleMax: peopleMax,
             bill
-        }));
+        };
+        dispatch(updateTableThunk(updatedTable)).then(() => {
+            navigate('/');
+        });
     };
 
     return (
